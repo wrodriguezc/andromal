@@ -95,7 +95,7 @@ class Analysis extends Controller {
 
                     execPromise(execute_run_androguard).then((result) => {
                         globalContext.stdout = `${result} \nRunning ${execute_run_droidbox}`;
-                        return execPromise(execute_run_androguard).then((result) => {
+                        return execPromise(execute_run_droidbox).then((result) => {
                             globalContext.stdout = result;
                         });
                     }).catch((e) => {

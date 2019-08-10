@@ -6,7 +6,7 @@ services:
       - "2222:22"
     volumes:
       - ./data:/data
-  drodbox:
+  droidbox:
     image: "williamrc/droidbox:latest"
     ports:
       - "2223:22"
