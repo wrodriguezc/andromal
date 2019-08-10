@@ -1,0 +1,15 @@
+.screenshot {
+    margin-bottom: 15px;
+  }
+
+  .root{
+      overflow: hidden;
+  }
+
+  #stdout{
+      border: none;
+      font-family: 'Courier New', Courier, monospace;
+      width: 100%;
+      background-color: black;
+      color: white;
+  }

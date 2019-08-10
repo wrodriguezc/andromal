@@ -1,0 +1,15 @@
+version: "3.7"
+services:
+  androguard:
+    image: "williamrc/androguard:latest"
+    ports:
+      - "2222:22"
+    volumes:
+      - ./data:/data
+  drodbox:
+    image: "williamrc/droidbox:latest"
+    ports:
+      - "2223:22"
+      - "5901:5900"
+    volumes:
+      - ./data:/data    

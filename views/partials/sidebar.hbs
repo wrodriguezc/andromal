@@ -1,0 +1,46 @@
+<div class="sidebar" data-color="azure" data-background-color="white" data-image="assets/img/sidebar-1.jpg">
+    <!--
+        Tip 1: You can change the color of the sidebar using: data-color="purple | azure | green | orange | danger"
+
+        Tip 2: you can also add an image using data-image tag
+    -->
+    <div class="logo">
+        <a href="http://www.creative-tim.com" class="simple-text logo-normal">
+            Andromal
+        </a>
+    </div>
+    <div class="sidebar-wrapper">
+        <ul class="nav">
+            {{#if home}}
+            <li class="nav-item active  ">
+                {{else}}
+            <li class="nav-item ">
+                {{/if}}
+                <a class="nav-link" href="./">
+                    <i class="material-icons">bug_report</i>
+                    <p>Samples</p>
+                </a>
+            </li>
+            {{#if analysis}}
+            <li class="nav-item active  ">
+                {{else}}
+            <li class="nav-item ">
+                {{/if}}
+                <a class="nav-link" href="./analysis">
+                    <i class="material-icons">content_paste</i>
+                    <p>Analysis</p>
+                </a>
+            </li>
+            {{#if options}}
+            <li class="nav-item active  ">
+                {{else}}
+            <li class="nav-item ">
+                {{/if}}
+                <a class="nav-link" href="./options">
+                    <i class="material-icons">settings</i>
+                    <p>Options</p>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>

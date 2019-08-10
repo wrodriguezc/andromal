@@ -1,0 +1,178 @@
+<script language="javascript">
+  $(document).ready(function () {
+    {{#if staticAnalysis}}
+    $('#manifest').empty().simpleXML({ xmlString: `{{{manifest}}}` });
+    {{/if}}
+    {{#if dynamicAnalysis}}
+    jsonView.format(`{{{analysis}}}`, '.root');
+    {{/if}}
+    {{#if runningAnalysis}}
+    function getStdout(){
+      fetch('/run_stdout').then(response => {
+        return response.text();
+      }).then(text => {
+        if (text !== 'done'){
+          $('#stdout').append(text); 
+          setTimeout(getStdout, 3000);
+        }else{
+          location.reload();
+        }        
+      });
+    }
+    getStdout();
+    {{/if}}
+  });
+</script>
+<div class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-lg-12 col-md-12">
+        <div class="card">
+          <div class="card-header card-header-warning">
+            <h4 class="card-title">Select sample for analysis</h4>
+          </div>
+          <div class="card-body table-responsive">
+            <table class="table table-hover">
+              <thead class="text-warning">
+                <th>Filename</th>
+              </thead>
+              <tbody>
+                {{#each samples}}
+                <tr>
+                  <td><a href="analysis?id={{this.id}}" l>{{this.name}}</a></td>
+                </tr>
+                {{/each}}
+              </tbody>
+            </table>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    {{#if selectedSample}}
+    {{#if runningAnalysis}}
+    <div class="row">
+      <div class="col-lg-12 col-md-12">
+        <div class="card">
+          <div class="card-body">
+            <h2>{{{selectedSample.name}}}</h2>
+            <h3>Running analysis, please wait...</h3>
+            <textarea id="stdout" rows="4" cols="50"></textarea>            
+          </div>
+        </div>
+      </div>
+    </div>
+    {{else}}
+    <div class="row">
+      <div class="col-lg-12 col-md-12">
+        <div class="card">
+          <div class="card-body">
+            <h2>{{{selectedSample.name}}}</h2>
+            <form action="/run?id={{selectedSample.id}}" method="post">
+              <button type="submit" class="btn btn-primary pull-right">Run analysis </button>
+              <div class="clearfix"></div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    {{/if}}
+    {{/if}}
+    {{#if staticAnalysis}}
+    <div class="row">
+      <div class="col-lg-6 col-md-6">
+        <div class="card">
+          <div class="card-header card-header-warning">
+            <h4 class="card-title">Manifest</h4>
+          </div>
+          <div class="card-body">
+            <div id="manifest"></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6 col-md-6">
+        <div class="card">
+          <div class="card-header card-header-warning">
+            <h4 class="card-title">Static analysis result</h4>
+          </div>
+          <div class="card-body">
+            <p>
+              <a href="{{{resourcesUrl}}}" download>
+                <i class="material-icons">archive</i> Resources file
+              </a></p>
+            <p>
+              <a href="{{{decompiledUrl}}}" download>
+                <i class="material-icons">code</i> Source code
+              </a>
+            </p>
+            <p>
+              <h4>Recommended regular expresions</h4><br>
+              <b>Find IP addresses</b><br>
+              \b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b<br><br>
+              <b>Find domain names</b><br>
+              (")(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9](")
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    {{/if}}
+    {{#if dynamicAnalysis}}
+    <div class="row">
+      <div class="col-lg-12 col-md-12">
+        <div class="card">
+          <div class="card-header card-header-success">
+            <h4 class="card-title">Dynamic analysis results</h4>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div id="activity" class="root"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-12 col-md-12">
+        <div class="card">
+          <div class="card-header card-header-success">
+            <h4 class="card-title">Execution screenshots</h4>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              {{#each screenshotsUrls}}
+              <img class="col-lg-3 col-md-3 col-sm-3 screenshot" src="{{this}}">
+              {{/each}}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-6 col-md-6">
+        <div class="card">
+          <div class="card-header card-header-primary">
+            <h4 class="card-title">Dynamic analysis logs</h4>
+          </div>
+          <div class="card-body">
+            <p>
+              <a href="{{{analysisLogUrl}}}" download>
+                <i class="material-icons">description</i> Analysis log
+              </a></p>
+            <p>
+              <a href="{{{emulatorLogUrl}}}" download>
+                <i class="material-icons">description</i> Emulator log
+              </a>
+            </p>
+            <p>
+              <a href="{{{vncLogUrl}}}" download>
+                <i class="material-icons">description</i> VNC log
+              </a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    {{/if}}
+  </div>
+</div>
