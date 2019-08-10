@@ -6,6 +6,7 @@ function scanSamples(samplesPath) {
     return new Promise((resolve, reject) => {
 
         let samples = {};
+        let count = 0;
 
         if (!fs.pathExistsSync(samplesPath)) {
             fs.mkdirsSync(samplesPath);
@@ -39,15 +40,15 @@ function scanSamples(samplesPath) {
                             id: file,
                             name: sampleFiles[0]
                         };
+                        count++;
                     }
                 }
 
             });
 
-            resolve(samples);
+            resolve({ samples: samples, count: count });
 
         });
-
     });
 }
 

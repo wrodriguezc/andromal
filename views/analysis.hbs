@@ -13,6 +13,9 @@
       }).then(text => {
         if (text !== 'done'){
           $('#stdout').append(text); 
+        let psconsole = $('#stdout');
+        if(psconsole.length)
+          psconsole.scrollTop(psconsole[0].scrollHeight - psconsole.height());
           setTimeout(getStdout, 3000);
         }else{
           location.reload();
@@ -57,7 +60,7 @@
           <div class="card-body">
             <h2>{{{selectedSample.name}}}</h2>
             <h3>Running analysis, please wait...</h3>
-            <textarea id="stdout" rows="4" cols="50"></textarea>            
+            <textarea id="stdout" rows="8" cols="50"></textarea>            
           </div>
         </div>
       </div>

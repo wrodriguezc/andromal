@@ -4,10 +4,30 @@ const Controller = require('./controller');
 const fileScanner = require('../util/file-scanner');
 const hex_to_ascii = require('../util/text-utils').hex_to_ascii;
 const exec = require('child_process').exec;
+const spawn = require('child_process').spawn;
+
+function spawnPromise(commandLine, ondata) {
+
+    return new Promise(function (resolve, reject) {
+
+        let args = commandLine.split(' ');
+        let command = args.shift();
+        const child = spawn(command, args);
+
+        child.stdout.on('data', (data) => {
+            ondata(data);
+        });
+
+        child.on('exit', (code, signal) => {
+            resolve();
+        });
+
+    });
+}
 
 function execPromise(command) {
     return new Promise(function (resolve, reject) {
-        exec(command, (error, stdout, stderr) => {
+        spawn(command, { shell: '/bin/bash' }, (error, stdout, stderr) => {
             if (error) {
                 reject(error);
                 return;
@@ -17,6 +37,7 @@ function execPromise(command) {
         });
     });
 }
+
 
 class Analysis extends Controller {
 
@@ -84,20 +105,22 @@ class Analysis extends Controller {
 
                     let sampleId = req.query.id;
                     let sampleName = this.context.selectedSample.name;
-                    let duration = 200;
+                    let duration = 120;
 
                     const run_androguard = path.resolve('bin', 'run_androguard.sh');
                     const run_droidbox = path.resolve('bin', 'run_droidbox.sh');
                     const execute_run_androguard = `${run_androguard} ${sampleId} ${sampleName}`;
                     const execute_run_droidbox = `${run_droidbox} ${sampleId} ${sampleName} ${duration}`;
 
-                    globalContext.stdout = `Running ${execute_run_androguard}`;
+                    globalContext.stdout = `Running ${execute_run_droidbox}\n`;
 
-                    execPromise(execute_run_androguard).then((result) => {
-                        globalContext.stdout = `${result} \nRunning ${execute_run_droidbox}`;
-                        return execPromise(execute_run_droidbox).then((result) => {
-                            globalContext.stdout = result;
-                        });
+                    let stdoutCallback = (data) =>{
+                        globalContext.stdout += data;
+                    }
+
+                    spawnPromise(execute_run_droidbox, stdoutCallback).then((result) => {
+                        globalContext.stdout = `${result} \nRunning ${execute_run_androguard}\n`;
+                            return spawnPromise(execute_run_androguard, stdoutCallback);
                     }).catch((e) => {
                         globalContext.stdout = e.message;
                     }).finally(() => {
@@ -176,7 +199,7 @@ class Analysis extends Controller {
             const dynamicAnalysisPath = path.resolve('data', 'dynamic_analysis', req.query.id);
             const outPath = path.resolve('data', 'dynamic_analysis', req.query.id, 'out');
             const screenshotsBaseUrl = 'analyzed/dynamic_analysis/' + req.query.id + '/out/';
-            const analysisPath = path.resolve('data', 'dynamic_analysis', req.query.id, 'out', 'analysis.json');
+            const analysisPath = path.resolve('data', 'dynamic_analysis', req.query.id, 'analysis.json');
             const analysisLogUrl = 'analyzed/dynamic_analysis/' + req.query.id + '/logs/analysis.log';
             const emulatorLogUrl = 'analyzed/dynamic_analysis/' + req.query.id + '/logs/emulator.log';
             const vncLogUrl = 'analyzed/dynamic_analysis/' + req.query.id + '/logs/vnc.log';
@@ -203,10 +226,6 @@ class Analysis extends Controller {
 
                     fs.readFile(analysisPath).then(data => {
 
-                        if (err) {
-                            throw err;
-                        }
-
                         let analysis = JSON.parse(data);
 
                         for (let accessId in analysis.fdaccess) {
@@ -222,7 +241,7 @@ class Analysis extends Controller {
                         resolve();
                     });
                 });
-            }else {
+            } else {
                 this.context.dynamicAnalysis = false;
                 resolve();
             }

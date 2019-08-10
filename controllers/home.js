@@ -32,9 +32,9 @@ class Home extends Controller {
 
             }).then(() => {
                 return fileScanner.scanSamples(samplesPath);
-            }).then((samples) => {
-                this.context.samples = samples;
-                this.context.sampleCount = samples.length;
+            }).then((result) => {
+                this.context.samples = result.samples;
+                this.context.sampleCount = result.count;
             });
 
         });
