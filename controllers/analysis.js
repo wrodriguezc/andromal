@@ -68,8 +68,8 @@ class Analysis extends Controller {
 
                 const samplesPath = path.resolve('data', 'samples');
 
-                fileScanner.scanSamples(samplesPath).then((samples) => {
-                    this.context.samples = samples;
+                fileScanner.scanSamples(samplesPath).then((result) => {
+                    this.context.samples = result.samples;
                     this.context.selectedSample = undefined;
                 }).then(() => {
 
