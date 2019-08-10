@@ -1,2 +1,2 @@
 #!/bin/sh
-ssh root@localhost -p 2222 "/opt/androguard/bin/./decompile.sh $1 $2"
+ssh root@androguard -p 22 "/opt/androguard/bin/./decompile.sh $1 $2"
