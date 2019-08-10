@@ -12,4 +12,10 @@ services:
       - "2223:22"
       - "5901:5900"
     volumes:
-      - ./data:/data    
+      - ./data:/data
+  andromal:
+    image: "williamrc/andromal:latest"
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./data:/opt/andromal/data    

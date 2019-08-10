@@ -13,8 +13,11 @@ RUN npm install
 
 #Copy app to image
 COPY bin bin
+COPY controllers controllers
+COPY util util
+COPY views views
 COPY www www
-COPY index.js .
+COPY app.js .
 
 #Setup SSH access
 RUN mkdir --mode=700 /root/.ssh
@@ -28,4 +31,4 @@ RUN echo "LogLevel ERROR" >> /root/.ssh/config
 RUN echo "UserKnownHostsFile /dev/null" >> /root/.ssh/config
 
 EXPOSE 8080
-CMD [ "node", "index.js" ]
+CMD [ "node", "app.js" ]

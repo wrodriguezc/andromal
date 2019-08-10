@@ -1,1 +1,2 @@
-docker build -t andromal .
+#!/bin/bash
+docker build -t williamrc/andromal .
